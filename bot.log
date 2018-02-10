@@ -1,0 +1,38 @@
+2018-02-09 23:53:31,652 / bot / INFO : Connecting to irc.chat.twitch.tv on port 6667
+2018-02-09 23:53:31,747 / bot / INFO : Conncetion successful
+2018-02-09 23:53:31,749 / bot / INFO : Starting message queue
+2018-02-09 23:53:31,749 / bot / INFO : Setting up commands module
+2018-02-09 23:53:31,750 / bot.commands / INFO : Loaded command <echo>
+2018-02-09 23:53:31,752 / bot.commands / INFO : Starting command queue
+2018-02-09 23:57:38,172 / bot / INFO : Connecting to irc.chat.twitch.tv on port 6667
+2018-02-09 23:57:38,228 / bot / INFO : Conncetion successful
+2018-02-09 23:57:38,230 / bot / INFO : Starting message queue
+2018-02-09 23:57:38,230 / bot / INFO : Setting up commands module
+2018-02-09 23:57:38,231 / bot.commands / INFO : Loaded command <echo>
+2018-02-09 23:57:38,233 / bot.commands / INFO : Starting command queue
+2018-02-09 23:57:48,868 / bot / DEBUG : drazzzer sent message !echo 1
+2018-02-09 23:57:48,868 / bot.commands / INFO : Adding <Command(by='drazzzer', command='echo', args=['1'])> to the command queue
+2018-02-09 23:57:48,869 / bot.commands / INFO : Executing <Command(by='drazzzer', command='echo', args=['1'])>
+2018-02-09 23:57:48,869 / bot.commands / INFO : Adding <Message(to='drazzzer', message='1')> to the message queue
+2018-02-09 23:57:48,870 / bot / INFO : Sending message Message(to='drazzzer', message='1')
+2018-02-09 23:59:53,534 / bot / INFO : Connecting to irc.chat.twitch.tv on port 6667
+2018-02-09 23:59:53,628 / bot / INFO : Conncetion successful
+2018-02-09 23:59:53,630 / bot / INFO : Starting message queue
+2018-02-09 23:59:53,631 / bot / INFO : Setting up commands module
+2018-02-09 23:59:53,631 / bot.commands / INFO : Loaded command <echo>
+2018-02-09 23:59:53,633 / bot.commands / INFO : Starting command queue
+2018-02-09 23:59:59,093 / bot / DEBUG : drazzzer sent message 123
+2018-02-10 00:00:09,947 / bot / INFO : Connecting to irc.chat.twitch.tv on port 6667
+2018-02-10 00:00:10,002 / bot / INFO : Conncetion successful
+2018-02-10 00:00:10,002 / bot / INFO : Starting message queue
+2018-02-10 00:00:10,002 / bot / INFO : Setting up commands module
+2018-02-10 00:00:10,003 / bot.commands / INFO : Loaded command <echo>
+2018-02-10 00:00:10,003 / bot.commands / INFO : Starting command queue
+2018-02-10 00:00:50,658 / bot / INFO : Connecting to irc.chat.twitch.tv on port 6667
+2018-02-10 00:00:50,717 / bot / INFO : Conncetion successful
+2018-02-10 00:00:50,719 / bot / INFO : Starting message queue
+2018-02-10 00:00:50,720 / bot / INFO : Setting up commands module
+2018-02-10 00:00:50,720 / bot.commands / INFO : Loaded command <lol>
+2018-02-10 00:00:50,721 / bot.commands / WARNING : Command <lol> not found
+2018-02-10 00:00:50,721 / bot.commands / INFO : Loaded command <echo>
+2018-02-10 00:00:50,723 / bot.commands / INFO : Starting command queue
