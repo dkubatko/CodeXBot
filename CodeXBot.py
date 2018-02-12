@@ -1,11 +1,12 @@
 import sys
 import socket
 import requests
-import settings
+import bot_settings as settings
 import threading
 import time
 import logging
 import collections
+from flask_socketio import SocketIO
 from queue import Queue
 from botCommands import Commands
 
@@ -48,6 +49,11 @@ class TwitchBot():
         self.logger.info('Setting up commands module')
         self.commands = Commands(self)
 
+        self.logger.info('Initiating socketio to None')
+        self._socketio = None
+        self._sid = None
+
+
     def _log_setup(self):
         self.logger = logging.getLogger('bot')
         log_f = logging.FileHandler(settings.BOT_LOG_FILE)
@@ -60,7 +66,7 @@ class TwitchBot():
         else:
             self.logger.setLevel(logging.INFO)
 
-        formatter = logging.Formatter('%(asctime)s / %(name)s / %(levelname)s : %(message)s')
+        formatter = logging.Formatter(settings.LOG_FORMATTER)
         log_f.setFormatter(formatter)
         log_s.setFormatter(formatter)
 
@@ -111,7 +117,7 @@ class TwitchBot():
 
         # respond to ping message
         if ('PING' == parts[0]):
-            self.on_ping()
+            self._on_ping()
             return
 
         # process privatemessage
@@ -122,22 +128,10 @@ class TwitchBot():
             # extract sender name from line and put it in parts[2]
             parts[2] = parts[0].split('!')[0]
             # pass args with arg 0 as username
-            self.on_prvmsg(parts[2:])
+            self._on_prvmsg(parts[2:])
 
-    def start(self):
-        s = self.IRCconn
-        MODT = False
-        readbuffer = ''
-        while True:
-            readbuffer = readbuffer + s.recv(1024).decode('utf-8')
-            temp = readbuffer.split('\n')
-            # Pops last empty message to readbuffer
-            readbuffer = temp.pop()
 
-            for line in temp:
-                self._process(line)
-
-    def on_prvmsg(self, args):
+    def _on_prvmsg(self, args):
         # get sender with removed # from name
         sender = args[0][1:]
         # Remove : from message and join parts of the message
@@ -153,19 +147,25 @@ class TwitchBot():
             self.commands.do(sender, cmd, args)
         return
 
-    def on_ping(self):
+    def _on_ping(self):
         self.IRCconn.send(bytes(settings.PONG_RESPONSE,'utf-8'))
 
+    def start(self):
+        self.logger.info("Starting connection to {0}".format(self.channel))
+        s = self.IRCconn
+        MODT = False
+        readbuffer = ''
+        while True:
+            readbuffer = readbuffer + s.recv(1024).decode('utf-8')
+            temp = readbuffer.split('\n')
+            # Pops last empty message to readbuffer
+            readbuffer = temp.pop()
 
+            for line in temp:
+                self._process(line)
 
-def main():
-    username  = 'codexchatbot'
-    client_id = 'womlj3ps8t36qcso8032fhofgjhjdq'
-    token     = 'oauth:pjrq4vt8m8yz27azf5d6t6c3xilc1y'
-    channel   = 'miva1337'
-
-    bot = TwitchBot(username, client_id, token, channel)
-    bot.start()
-
-if __name__ == '__main__':
-    main()
+    def set_socket(self, socketio, sid):
+        self.logger.debug("Updating socket to new socket with sid: {0}".format(sid))
+        self.commands.set_socket(socketio, sid)
+        self._socketio = socketio
+        self._sid = sid

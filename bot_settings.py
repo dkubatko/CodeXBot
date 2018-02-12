@@ -15,6 +15,12 @@ BOT_LOG_FILE = "bot.log"
 # Commands setup
 COMMANDS_LOG_FILE = "commands.log"
 COMMANDS_AVAILABLE = ['echo']
-COMMANDS_DEBUG = []
+COMMANDS_DEBUG = ['forward']
 COMMANDS_DEBUG.extend(COMMANDS_AVAILABLE)
 COMMAND_PREFIX = "command_"
+
+LOG_FORMATTER = '%(asctime)s / %(name)s / %(levelname)s\n'\
+        '| FILE: %(filename)s FUNCTION: %(funcName)s LINE: %(lineno)d |\nMESSAGE: %(message)s'
+
+COMMAND_FORWARD_RESPONSE_SUCCESS = "Forwarded message {0} to the socket."
+COMMAND_FORWARD_RESPONSE_FAIL = "SID is not set yet. Connect to the server."

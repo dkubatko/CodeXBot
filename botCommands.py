@@ -1,10 +1,11 @@
 import irc.bot
 import requests
-import settings
+import bot_settings as settings
 import threading
 import logging
 import collections
 from queue import Queue
+from flask_socketio import SocketIO
 
 class Commands():
     def __init__(self, bot):
@@ -18,7 +19,7 @@ class Commands():
         # load commands from settings
         self._load_commands()
 
-        # Create command type
+        # create command type
         self.Command = collections.namedtuple('Command', ['by', 'command', 'args'])
 
         # start command queue
@@ -26,6 +27,10 @@ class Commands():
         self._command_thread = threading.Thread(target=self._command_queue_run)
         self._command_thread.daemon = True
         self._command_thread.start()
+
+        # setting socketio sid var
+        self._socketio = None
+        self._sid = None
 
     def _log_setup(self):
         self.logger = logging.getLogger('bot.commands')
@@ -37,7 +42,7 @@ class Commands():
         else:
             self.logger.setLevel(logging.INFO)
 
-        formatter = logging.Formatter('%(asctime)s / %(name)s / %(levelname)s : %(message)s')
+        formatter = logging.Formatter(settings.LOG_FORMATTER)
         log_f.setFormatter(formatter)
 
         self.logger.addHandler(log_f)
@@ -87,8 +92,31 @@ class Commands():
         self.logger.info("Adding <{0}> to the command queue".format(cmd))
         self._command_queue.put(cmd)
 
+    # updates socket to new sid
+    def set_socket(self, socketio, sid):
+        # self.logger.info("Socketio: {0} sid: {1}".format(socketio, sid))
+        self._socketio = socketio
+        self._sid = sid
+
     # Echoes text back to the chat
     def command_echo(self, cmd):
         return self.bot.Message(cmd.by, ' '.join(cmd.args))
+
+    # Fowards text to the websocket
+    def command_forward(self, cmd):
+        self.logger.info("Starting forward command")
+        # check whether sid exists
+        if (self._socketio == None):
+            self.logger.debug("No socket set up.")
+            return self.bot.Message(cmd.by,
+                                    settings.COMMAND_FORWARD_RESPONSE_FAIL)
+
+        message = ' '.join(cmd.args)
+        print(message)
+        data = {"message": message}
+        print(data)
+        self._socketio("forward", data, room=self._sid)
+        print("sent!")
+        return settings.COMMAND_FORWARD_RESPONSE_SUCCESS.format(message)
 
 
