@@ -9,9 +9,14 @@
         });
         socket.on('forward', function(data) {
             console.log(data);
-            alert(data);
+            var list = document.getElementById('demo');
+            var entry = document.createElement('li');
+            entry.appendChild(document.createTextNode(data.message));
+            list.appendChild(entry);
         });
     </script>
     <p>You are connected</p>
+    <ol id="demo">
+    </ol>
 </body>
 </html>

@@ -1,4 +1,3 @@
-import irc.bot
 import requests
 import bot_settings as settings
 import threading
@@ -112,11 +111,8 @@ class Commands():
                                     settings.COMMAND_FORWARD_RESPONSE_FAIL)
 
         message = ' '.join(cmd.args)
-        print(message)
         data = {"message": message}
-        print(data)
-        self._socketio("forward", data, room=self._sid)
-        print("sent!")
+        self._socketio.emit("forward", data, room=self._sid)
         return settings.COMMAND_FORWARD_RESPONSE_SUCCESS.format(message)
 
 

@@ -7,7 +7,7 @@ import threading
 from CodeXBot import TwitchBot as Bot
 
 app = Flask(__name__, template_folder='frontend')
-socketio = SocketIO(app, message_queue="http://localhost:5000/")
+socketio = SocketIO(app)
 logger = logging.getLogger('flask_app')
 
 TESTING_CHANNEL = 'miva1337'
@@ -21,7 +21,6 @@ bot = Bot(settings.BOT_USERNAME, settings.BOT_CLIENT_ID,
 
 def socket_emit(event, message, room):
     global socketio
-    print("Emitting!")
     socketio.emit(event, message)
 
 
@@ -77,16 +76,10 @@ def login():
 def handle_update_socket(json):
     username = json['username']
     app.logger.info('Received update request for {0}'.format(username))
-    room = username
-    join_room(room)
     global bot, socketio
-    # socketio.emit("forward", {'data': 'hello'}, room=room)
-    bot.set_socket(socket_emit, request.sid)
-    socket_emit("forward", {"message": 'message'}, 'miva1337')
+    bot.set_socket(socketio, request.sid)
 
 if (__name__ == '__main__'):
-    bot_thread = threading.Thread(target=bot.start)
-    bot_thread.daemon = True
-    bot_thread.start()
+    socketio.start_background_task(target=bot.start)
     log_setup(app, logger)
     socketio.run(app)
