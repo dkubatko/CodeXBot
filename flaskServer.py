@@ -19,9 +19,21 @@ bot = Bot(settings.BOT_USERNAME, settings.BOT_CLIENT_ID,
 # if (settings.DEBUG):
 #     app.config['DEBUG'] = True
 
+# emit one message through socket to the specified room
 def socket_emit(event, message, room):
-    global socketio
-    socketio.emit(event, message)
+    global socketio, bot
+    try:
+        socketio.emit(event, message)
+    except SocketIO.NoConnectionError:
+        # reset connection to the webpage
+        bot.set_socket(None, None)
+        logger.warning("Failed to establish connection to the room {0}. Resetting "\
+            "socket info for bot.".format(room))
+    except Exception as e:
+        logger.warning("Failed to send message to room "\
+            "{0} due to {1}".format(room, e))
+
+
 
 
 def log_setup(app, logger):
