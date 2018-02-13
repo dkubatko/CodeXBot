@@ -5,6 +5,7 @@ import logging
 import collections
 from queue import Queue
 from flask_socketio import SocketIO
+import langdetect
 
 class Commands():
     def __init__(self, bot):
@@ -57,7 +58,7 @@ class Commands():
                 self.logger.info("Loaded command <{0}>".format(cmd))
                 self.commands[cmd] = getattr(self, settings.COMMAND_PREFIX + cmd)
             except AttributeError:
-                self.logger.warning("Command <{0}> not found".format(cmd))
+                self.logger.warning("<{0}> not found".format(cmd))
 
 
     # performs one command at a time
@@ -102,8 +103,8 @@ class Commands():
         return self.bot.Message(cmd.by, ' '.join(cmd.args))
 
     # Fowards text to the websocket
-    def command_forward(self, cmd):
-        self.logger.info("Starting forward command")
+    def command_ask(self, cmd):
+        self.logger.info("Starting {0} command".format(cmd.command))
         # check whether sid exists
         if (self._socketio == None):
             self.logger.debug("No socket set up.")
@@ -111,8 +112,18 @@ class Commands():
                                     settings.COMMAND_FORWARD_RESPONSE_FAIL)
 
         message = ' '.join(cmd.args)
-        data = {"message": message}
-        self._socketio.emit("forward", data, room=self._sid)
-        return settings.COMMAND_FORWARD_RESPONSE_SUCCESS.format(message)
+        try:
+            lang = langdetect.detect_langs(message)
+            if 'ru' in [l.lang for l in lang]:
+                lang = 'ru'
+            else:
+                lang = 'en'
+        except Exception as e:
+            lang = 'none'
+
+        data = {"message": message, "lang": lang}
+        self._socketio("ask", data, room=self._sid)
+        return self.bot.Message(cmd.by,
+                                settings.COMMAND_FORWARD_RESPONSE_SUCCESS.format(message))
 
 

@@ -23,15 +23,11 @@ bot = Bot(settings.BOT_USERNAME, settings.BOT_CLIENT_ID,
 def socket_emit(event, message, room):
     global socketio, bot
     try:
-        socketio.emit(event, message)
-    except SocketIO.NoConnectionError:
-        # reset connection to the webpage
-        bot.set_socket(None, None)
-        logger.warning("Failed to establish connection to the room {0}. Resetting "\
-            "socket info for bot.".format(room))
+        socketio.emit(event, message, room=room)
     except Exception as e:
         logger.warning("Failed to send message to room "\
             "{0} due to {1}".format(room, e))
+        bot.set_socket(None, None)
 
 
 
@@ -88,8 +84,8 @@ def login():
 def handle_update_socket(json):
     username = json['username']
     app.logger.info('Received update request for {0}'.format(username))
-    global bot, socketio
-    bot.set_socket(socketio, request.sid)
+    global bot
+    bot.set_socket(socket_emit, request.sid)
 
 if (__name__ == '__main__'):
     socketio.start_background_task(target=bot.start)

@@ -15,7 +15,7 @@ BOT_LOG_FILE = "bot.log"
 # Commands setup
 COMMANDS_LOG_FILE = "commands.log"
 COMMANDS_AVAILABLE = ['echo']
-COMMANDS_DEBUG = ['forward']
+COMMANDS_DEBUG = ['ask']
 COMMANDS_DEBUG.extend(COMMANDS_AVAILABLE)
 COMMAND_PREFIX = "command_"
 
