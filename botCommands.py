@@ -3,9 +3,10 @@ import bot_settings as settings
 import threading
 import logging
 import collections
+from giveaway import Giveaway
 from queue import Queue
 from flask_socketio import SocketIO
-import langdetect
+from textblob import TextBlob
 
 class Commands():
     def __init__(self, bot):
@@ -20,6 +21,7 @@ class Commands():
         self._load_commands()
 
         # create command type
+        # TODO: move to class
         self.Command = collections.namedtuple('Command', ['by', 'command', 'args'])
 
         # start command queue
@@ -31,6 +33,14 @@ class Commands():
         # setting socketio sid var
         self._socketio = None
         self._sid = None
+
+        # setting moderators
+        # TODO: Convert to class
+        self.moderators = []
+        self._load_moderators()
+
+        # initiate giveaway class
+        self.giveaway = Giveaway(self.logger)
 
     def _log_setup(self):
         self.logger = logging.getLogger('bot.commands')
@@ -55,10 +65,13 @@ class Commands():
 
         for cmd in cmdlist:
             try:
-                self.logger.info("Loaded command <{0}>".format(cmd))
                 self.commands[cmd] = getattr(self, settings.COMMAND_PREFIX + cmd)
+                self.logger.info("Loaded command <{0}>".format(cmd))
             except AttributeError:
                 self.logger.warning("<{0}> not found".format(cmd))
+
+    def _load_moderators(self):
+        self.moderators = settings.MODERATORS
 
 
     # performs one command at a time
@@ -98,6 +111,14 @@ class Commands():
         self._socketio = socketio
         self._sid = sid
 
+    # Checks for a user moderator status
+    # TODO: Twitch API
+    def check_mod(self, username):
+        if username in self.moderators:
+            return True
+        else:
+            return False
+
     # Echoes text back to the chat
     def command_echo(self, cmd):
         return self.bot.Message(cmd.by, ' '.join(cmd.args))
@@ -113,8 +134,8 @@ class Commands():
 
         message = ' '.join(cmd.args)
         try:
-            lang = langdetect.detect_langs(message)
-            if 'ru' in [l.lang for l in lang]:
+            lang = TextBlob(message).detect_language()
+            if 'ru' == lang:
                 lang = 'ru'
             else:
                 lang = 'en'
@@ -127,3 +148,81 @@ class Commands():
                                 settings.COMMAND_FORWARD_RESPONSE_SUCCESS.format(message))
 
 
+    # givaway operations
+    def command_giveaway(self, cmd):
+        if len(cmd.args) == 0:
+            arg = None
+        else:
+            arg = cmd.args[0]
+        
+        # Check whether command requires mod access
+        if arg in settings.GIVEAWAY_MOD_ARGS:
+            if self.check_mod(cmd.by):
+                return self._cmd_giveaway_mods(cmd)      
+        else:
+            return self._cmd_giveaway(cmd)
+
+
+    def _cmd_giveaway_mods(self, cmd):
+        if len(cmd.args) == 0:
+            arg = None
+        else:
+            arg = cmd.args[0]
+
+        if arg == 'start':
+            # check for arguments presence
+            if len(cmd.args) < 3:
+                return self.bot.Message(cmd.by, 
+                    settings.GIVEAWAY_START_USAGE)
+            # Get arguments from the command call
+            name = cmd.args[1]
+            description = cmd.args[2]
+            # Execute command
+            success, message = self.giveaway.start(name, description)
+
+            # Send event success of giveaway start
+            if success:
+                data = {"message": 'Giveaway started', "lang": 'en'}
+                self._socketio("giveaway", data, room=self._sid)
+
+            return self.bot.Message(cmd.by, message)
+        elif arg == 'close':
+            success, message = self.giveaway.close()
+
+            # Send event success of giveaway close
+            if success:
+                data = {"message": 'Giveaway closed', "lang": 'en'}
+                self._socketio("giveaway", data, room=self._sid)
+
+            return self.bot.Message(cmd.by, message)
+        else:
+            return self.bot.Message(cmd.by, 
+                    settings.GIVEAWAY_NO_ARG)
+
+
+    def _cmd_giveaway(self, cmd):
+        if len(cmd.args) == 0:
+            arg = None
+        else:
+            arg = cmd.args[0]
+        
+        # Check for requested argument
+        if not arg:
+            success, message = self.giveaway.enter(cmd.by)
+
+            # Send event success of giveaway entry
+            if success:
+                data = {"message": '{0} entered giveaway'.format(cmd.by), 
+                                "lang": 'en'}
+                self._socketio("giveaway", data, room=self._sid)
+
+            return self.bot.Message(cmd.by, message)
+        elif arg == 'stats':
+            success, message = self.giveaway.statistics()
+            return self.bot.Message(cmd.by, message)
+        elif arg == 'info':
+            success, message = self.giveaway.info()
+            return self.bot.Message(cmd.by, message)
+        else:
+            return self.bot.Message(cmd.by, 
+                settings.GIVEAWAY_NO_ARG)

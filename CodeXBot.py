@@ -41,6 +41,7 @@ class TwitchBot():
         self.Message = collections.namedtuple('Message', ['to', 'message'])
 
         # Set up messaging queue
+        # TODO: Move to a separate function
         self._message_queue = Queue()
         self._message_thread = threading.Thread(target=self._message_queue_run)
         self._message_thread.daemon = True
@@ -109,6 +110,7 @@ class TwitchBot():
         return s
 
     def _process(self, line):
+        print(line)
         parts = [elem.strip() for elem in line.split(' ')]
 
         # escape the case when no spaces

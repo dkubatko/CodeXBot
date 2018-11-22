@@ -38,27 +38,31 @@
         var voiceReady = false;
         var synth = window.speechSynthesis;
         window.speechSynthesis.onvoiceschanged = function() {
+            console.log("Voices ready")
             // only start upon voices loaded
             voiceReady = true;
+            var voices = window.speechSynthesis.getVoices();
+            console.log(voices);
         };
         function speak(message, lang) {
             var voices = window.speechSynthesis.getVoices();
-            console.log(voices);
             if (voiceReady) {
                 var utterThis = new SpeechSynthesisUtterance(message);           
                 utterThis.rate = rate.value;
                 utterThis.pitch = pitch.value;
                 utterThis.volume = volume.value;
-                
+                // CHANGE FROM HARDCODED
+                console.log(lang);
+                console.log(message);
                 switch (lang) {
                     case 'ru':
-                        utterThis.voice = synth.getVoices()[15];
+                        utterThis.voice = synth.getVoices()[79];
                         break;
                     case 'en':
-                        utterThis.voice = synth.getVoices()[1];
+                        utterThis.voice = synth.getVoices()[22];
                     break;
                     default:
-                        utterThis.voice = synth.getVoices()[1];
+                        utterThis.voice = synth.getVoices()[22];
                         break;
                 }
                 synth.speak(utterThis);
@@ -67,6 +71,7 @@
         var socket = io.connect('http://localhost:5000');
             socket.on('connect', function() {
                 socket.emit('update', {username: '{{ username }}}'});
+                speak("Connected", 'en');
             });
             socket.on('ask', function(data) {
                 console.log(data);
@@ -76,8 +81,20 @@
                 list.appendChild(entry);
                 speak(data.message, data.lang);
             });
+            socket.on('giveaway', function(data) {
+                console.log(data);
+                var list = document.getElementById('events');
+                var entry = document.createElement('li');
+                entry.appendChild(document.createTextNode(data.message));
+                list.appendChild(entry);
+                speak(data.message, data.lang);
+            });
     </script>
-    <ol id="demo">
+    <div style="display: flex; flex-direction: row;">
+    <ol id="demo" style="color: red;">
     </ol>
+    <ol id="events" style="color: blue">
+    </ol>
+    </div>
 </body>
 </html>

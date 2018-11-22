@@ -10,7 +10,7 @@ app = Flask(__name__, template_folder='frontend')
 socketio = SocketIO(app)
 logger = logging.getLogger('flask_app')
 
-TESTING_CHANNEL = 'miva1337'
+TESTING_CHANNEL = 'drazzzer'
 
 # Connect to testing channel
 bot = Bot(settings.BOT_USERNAME, settings.BOT_CLIENT_ID,
@@ -28,8 +28,6 @@ def socket_emit(event, message, room):
         logger.warning("Failed to send message to room "\
             "{0} due to {1}".format(room, e))
         bot.set_socket(None, None)
-
-
 
 
 def log_setup(app, logger):
