@@ -32,7 +32,7 @@ MODERATORS = ['drazzzer']
 GIVEAWAY_MOD_ARGS = ['start', 'close']
 GIVEAWAY_ARGS = ['stats']
 GIVEAWAY_START_USAGE = "Usage: <!giveaway start> <name> <description>"
-GIVEAWAY_NO_ARG = "No such argument for <!givaway> command"
+GIVEAWAY_NO_ARG = "No such argument for <!giveaway> command"
 
 # Commands constants
 GIVEAWAY_DEFAULT_NAME = "Default giveaway"

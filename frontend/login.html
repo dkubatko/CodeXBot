@@ -56,13 +56,13 @@
                 console.log(message);
                 switch (lang) {
                     case 'ru':
-                        utterThis.voice = synth.getVoices()[79];
+                        utterThis.voice = synth.getVoices()[17];
                         break;
                     case 'en':
-                        utterThis.voice = synth.getVoices()[22];
+                        utterThis.voice = synth.getVoices()[3];
                     break;
                     default:
-                        utterThis.voice = synth.getVoices()[22];
+                        utterThis.voice = synth.getVoices()[3];
                         break;
                 }
                 synth.speak(utterThis);

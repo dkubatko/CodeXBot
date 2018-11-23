@@ -110,7 +110,6 @@ class TwitchBot():
         return s
 
     def _process(self, line):
-        print(line)
         parts = [elem.strip() for elem in line.split(' ')]
 
         # escape the case when no spaces
