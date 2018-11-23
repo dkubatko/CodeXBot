@@ -10,6 +10,9 @@ class RequestFormatter(logging.Formatter):
         record.remote_addr = request.remote_addr
         return super().format(record)
 
+# Logs directory
+LOG_DIR = "logs/"
+
 # Logging settings
 REQUEST_FORMAT = '%(asctime)s / %(name)s / %(levelname)s\n'\
         '| FROM: %(remote_addr)s REQUEST URL: %(url)s |\n'\
@@ -17,7 +20,7 @@ REQUEST_FORMAT = '%(asctime)s / %(name)s / %(levelname)s\n'\
 
 FLASK_APP_LOG_FORMAT = '%(asctime)s / %(name)s / %(levelname)s\n'\
         '| FILE: %(filename)s FUNCTION: %(funcName)s LINE: %(lineno)d |\nMESSAGE: %(message)s'
-FLASK_LOG_FILE = 'flask_app.log'
+FLASK_LOG_FILE = LOG_DIR + 'flask_app.log'
 
 # Get environment variables
 try:

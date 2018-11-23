@@ -5,6 +5,7 @@ import flask_settings as settings
 import logging
 import threading
 from CodeXBot import TwitchBot as Bot
+from vkMusicDisplay import VKMusicDisplay
 
 app = Flask(__name__, template_folder='frontend')
 socketio = SocketIO(app)
@@ -15,6 +16,9 @@ TESTING_CHANNEL = 'drazzzer'
 # Connect to testing channel
 bot = Bot(settings.BOT_USERNAME, settings.BOT_CLIENT_ID,
           settings.BOT_TOKEN, TESTING_CHANNEL)
+
+# Create VKMusicDisplay var
+vkmd = None
 
 # if (settings.DEBUG):
 #     app.config['DEBUG'] = True
@@ -68,7 +72,7 @@ def log_setup(app, logger):
 
 @app.route('/')
 def index_page():
-    return render_template('index.html')
+    return render_template('index.html', username=request.form.get('username'))
 
 
 @app.route('/login', methods=['POST'])
@@ -76,6 +80,28 @@ def login():
     username = request.form['username']
     app.logger.info("Connected user with username <{0}>".format(username))
     return render_template('login.html', username = username)
+
+
+@app.route('/vk', methods=['GET'])
+def vk_auth():
+    code = request.args.get('code')
+    # get current room sid
+    global bot
+    sid = bot._sid
+    
+    if not code:
+        app.logger.info("Recieved vk auth token")
+        socket_emit('vk_auth', {'success': True}, sid)
+
+    # Initialize VKMD with code
+    vkmd = VKMusicDisplay(code)
+    vkmd.set_socket(socket_emit, sid)
+    
+    # Start polling music
+    socketio.start_background_task(target=vkmd.start)
+
+    socket_emit('vk_auth', {'success': True}, sid)
+    return 'Thanks!'
 
 
 @socketio.on('update')
@@ -88,4 +114,4 @@ def handle_update_socket(json):
 if (__name__ == '__main__'):
     socketio.start_background_task(target=bot.start)
     log_setup(app, logger)
-    socketio.run(app)
+    socketio.run(app, port=5000)

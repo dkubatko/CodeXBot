@@ -1,3 +1,5 @@
+import os
+
 # File with settings
 DEBUG = True
 # Const strings
@@ -9,11 +11,14 @@ PONG_RESPONSE = "PONG :tmi.twitch.tv\r\n"
 MESSAGE_ALL = 'PRIVMSG {0} :{1}\r\n'
 MESSAGE_TO = 'PRIVMSG {0} :@{1} {2}\r\n'
 
+# Logs directory
+LOG_DIR = "logs/"
+
 # Bot setup
-BOT_LOG_FILE = "bot.log"
+BOT_LOG_FILE = LOG_DIR + "bot.log"
 
 # Commands setup
-COMMANDS_LOG_FILE = "commands.log"
+COMMANDS_LOG_FILE = LOG_DIR + "commands.log"
 COMMANDS_AVAILABLE = ['echo']
 COMMANDS_DEBUG = ['ask', 'giveaway']
 COMMANDS_DEBUG.extend(COMMANDS_AVAILABLE)
@@ -24,6 +29,34 @@ LOG_FORMATTER = '%(asctime)s / %(name)s / %(levelname)s\n'\
 
 COMMAND_FORWARD_RESPONSE_SUCCESS = "Forwarded message {0} to the socket."
 COMMAND_FORWARD_RESPONSE_FAIL = "SID is not set yet. Connect to the server."
+
+# DB setup
+DB_CONNECTION_STRING = "mongodb+srv://{0}:{1}@codexbot-cluster-ds4ut.mongodb.net/test?retryWrites=true"
+DB_LOG_FILE = LOG_DIR + "db.log"
+
+# Get environment variables
+try:
+    DB_USERNAME = os.environ['DB_USERNAME']
+    DB_PASSWORD = os.environ['DB_PASSWORD']
+except:
+    print("Environment variables are not set up properly. Aborting.")
+    exit()
+
+# VK music display settings
+VK_ACCESS_TOKEN_LINK = "https://oauth.vk.com/access_token"
+VK_API_LINK = "https://api.vk.com/method/"
+VK_API_VERSION = '5.92'
+VK_NO_AUDIO = "No audio playing. Check status broadcasting"
+VK_LOG_FILE = LOG_DIR + "vkmd.log"
+VK_MUSIC_OUT_FILE = "now_playing.txt"
+VK_STATUS_POLL_DELAY = 3
+try:
+    VK_CLIENT_ID = os.environ['VK_CLIENT_ID']
+    VK_CLIENT_SECRET = os.environ['VK_CLIENT_SECRET']
+    VK_REDIRECT_URI = os.environ['VK_REDIRECT_URI']
+except:
+    print("Environment variables are not set up properly. Aborting.")
+    exit()
 
 # Moderators list
 MODERATORS = ['drazzzer']

@@ -51,7 +51,7 @@ class TwitchBot():
         self.commands = Commands(self)
 
         self.logger.info('Initiating socketio to None')
-        self._socketio = None
+        self._emit = None
         self._sid = None
 
 
@@ -165,8 +165,8 @@ class TwitchBot():
             for line in temp:
                 self._process(line)
 
-    def set_socket(self, socketio, sid):
+    def set_socket(self, emit_func, sid):
         self.logger.debug("Updating socket to new socket with sid: {0}".format(sid))
-        self.commands.set_socket(socketio, sid)
-        self._socketio = socketio
+        self.commands.set_socket(emit_func, sid)
+        self._emit = emit_func
         self._sid = sid

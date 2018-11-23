@@ -1,4 +1,6 @@
 import bot_settings as settings
+import mongoDriver as db
+import time
 
 class Giveaway():
     '''
@@ -7,6 +9,8 @@ class Giveaway():
     def __init__(self, logger):
         # Log setup
         self.logger = logger
+        # DB setup
+        self.db = db.MongoDriver()
         # Set initial state to not live
         self.live = False
         # Set properties to default
@@ -78,9 +82,17 @@ class Giveaway():
         self.logger.info("{0} joined giveaway {1}".format(username, self.name))
         return True, settings.GIVEAWAY_NEW_ENTRY.format(self.name)
 
+    def _jsonify_entry(self, entry):
+        return {
+            'type': 'entry',
+            'giveaway': self.name,
+            'entry': entry,
+        }
+
     # TODO: !!! WIRE TO MONGO !!!
     def _record(self, entry):
+        self.db.record_giveaway_entry(self._jsonify_entry(entry))
         # temporarily record entries to a file
-        f = open('../temp_giveaway', 'a')
-        f.write("Giveaway <{0}> | new entry: {1}\n".format(self.name, entry))
+        # f = open('../temp_giveaway', 'a')
+        # f.write("Giveaway <{0}> | new entry: {1}\n".format(self.name, entry))
     

@@ -31,7 +31,7 @@ class Commands():
         self._command_thread.start()
 
         # setting socketio sid var
-        self._socketio = None
+        self._emit = None
         self._sid = None
 
         # setting moderators
@@ -106,9 +106,9 @@ class Commands():
         self._command_queue.put(cmd)
 
     # updates socket to new sid
-    def set_socket(self, socketio, sid):
+    def set_socket(self, emit_func, sid):
         # self.logger.info("Socketio: {0} sid: {1}".format(socketio, sid))
-        self._socketio = socketio
+        self._emit = emit_func
         self._sid = sid
 
     # Checks for a user moderator status
@@ -127,7 +127,7 @@ class Commands():
     def command_ask(self, cmd):
         self.logger.info("Starting {0} command".format(cmd.command))
         # check whether sid exists
-        if (self._socketio == None):
+        if (self._sid == None):
             self.logger.debug("No socket set up.")
             return self.bot.Message(cmd.by,
                                     settings.COMMAND_FORWARD_RESPONSE_FAIL)
@@ -143,7 +143,7 @@ class Commands():
             lang = 'none'
 
         data = {"message": message, "lang": lang}
-        self._socketio("ask", data, room=self._sid)
+        self._emit("ask", data, room=self._sid)
         return self.bot.Message(cmd.by,
                                 settings.COMMAND_FORWARD_RESPONSE_SUCCESS.format(message))
 
@@ -183,7 +183,7 @@ class Commands():
             # Send event success of giveaway start
             if success:
                 data = {"message": 'Giveaway started', "lang": 'en'}
-                self._socketio("giveaway", data, room=self._sid)
+                self._emit("giveaway", data, room=self._sid)
 
             return self.bot.Message(cmd.by, message)
         elif arg == 'close':
@@ -192,7 +192,7 @@ class Commands():
             # Send event success of giveaway close
             if success:
                 data = {"message": 'Giveaway closed', "lang": 'en'}
-                self._socketio("giveaway", data, room=self._sid)
+                self._emit("giveaway", data, room=self._sid)
 
             return self.bot.Message(cmd.by, message)
         else:
@@ -214,7 +214,7 @@ class Commands():
             if success:
                 data = {"message": '{0} entered giveaway'.format(cmd.by), 
                                 "lang": 'en'}
-                self._socketio("giveaway", data, room=self._sid)
+                self._emit("giveaway", data, room=self._sid)
 
             return self.bot.Message(cmd.by, message)
         elif arg == 'stats':
