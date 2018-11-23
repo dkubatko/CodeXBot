@@ -6,7 +6,7 @@ socket.on('connect', function() {
 socket.on('ask', function(data) {
     console.log(data);
     var list = document.getElementById('demo');
-    var entry = document.createElement('li');
+    var entry = document.createElement('p');
     entry.appendChild(document.createTextNode(data.message));
     list.appendChild(entry);
     speak(data.message, data.lang);
@@ -14,14 +14,15 @@ socket.on('ask', function(data) {
 socket.on('giveaway', function(data) {
     console.log(data);
     var list = document.getElementById('events');
-    var entry = document.createElement('li');
+    var entry = document.createElement('p');
     entry.appendChild(document.createTextNode(data.message));
     list.appendChild(entry);
     speak(data.message, data.lang);
 });
 socket.on('vk_auth', function(data) {
     console.log(data);
-    $("#auth").append("<p>Authorized</p>");
+    $("#vk_auth").text("VK Connected!")
+    $("#vk_auth").prop("disabled", true)
     // var list = document.getElementById('events');
     // var entry = document.createElement('li');
     // entry.appendChild(document.createTextNode(data.message));
