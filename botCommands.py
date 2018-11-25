@@ -162,7 +162,7 @@ class Commands():
         else:
             return self._cmd_giveaway(cmd)
 
-
+    # Giveaway handler for moderators
     def _cmd_giveaway_mods(self, cmd):
         if len(cmd.args) == 0:
             arg = None
@@ -200,6 +200,7 @@ class Commands():
                     settings.GIVEAWAY_NO_ARG)
 
 
+    # Giveaway handler for non-mod users
     def _cmd_giveaway(self, cmd):
         if len(cmd.args) == 0:
             arg = None
