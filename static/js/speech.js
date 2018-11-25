@@ -31,23 +31,21 @@ $(document).ready(function() {
         // only start upon voices loaded
         voiceReady = true;
         var voices = window.speechSynthesis.getVoices();
-        console.log(voices);
 
         // Enable test function
         $("#test_speech").click(function() {
             speak("This is a test of a speech synthesis utility.");
         });
     };
-    function speak(message, lang) {
+    // Make speak visible everywhere
+    window.speak = function(message, lang) {
         var voices = window.speechSynthesis.getVoices();
         if (voiceReady) {
             var utterThis = new SpeechSynthesisUtterance(message);           
             utterThis.rate = rate.value;
             utterThis.pitch = pitch.value;
             utterThis.volume = volume.value;
-            // CHANGE FROM HARDCODED
-            console.log(lang);
-            console.log(message);
+
             switch (lang) {
                 case 'ru':
                     utterThis.voice = synth.getVoices()[17];

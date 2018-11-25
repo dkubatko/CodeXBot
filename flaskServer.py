@@ -110,7 +110,12 @@ def vk_auth():
         app.logger.info("Recieved vk auth token")
         socket_emit('vk_auth', {'success': True}, sid)
 
-    # Initialize VKMD with code
+    # TODO: Rewire current VKMD to new data
+    global vkmd
+    if vkmd:
+        vkmd.stop()
+    
+    # Initialize new VKMD with code
     vkmd = VKMusicDisplay(code, vk_redirect_uri)
     vkmd.set_socket(socket_emit, sid)
     
@@ -118,7 +123,7 @@ def vk_auth():
     socketio.start_background_task(target=vkmd.start)
 
     socket_emit('vk_auth', {'success': True}, sid)
-    
+
     return render_template('vk_auth_success.html')
 
 

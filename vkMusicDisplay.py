@@ -88,6 +88,10 @@ class VKMusicDisplay:
 
             # Wait delay
             time.sleep(settings.VK_STATUS_POLL_DELAY)
+    
+    # Disable poling
+    def stop(self):
+        self.connected = False
 
     # Build audio string from audio object
     def _build_audio_string(self, audio):

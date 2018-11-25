@@ -1,8 +1,9 @@
 var socket = io.connect(base_uri);
+
 socket.on('connect', function() {
     socket.emit('update', {username: '{{ username }}}'});
-    speak("Connected", 'en');
 });
+
 socket.on('ask', function(data) {
     console.log(data);
     var list = document.getElementById('demo');
