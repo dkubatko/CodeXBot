@@ -91,6 +91,7 @@ class VKMusicDisplay:
     
     # Disable poling
     def stop(self):
+        self.logger.info("Stopping current VKMD instance")
         self.connected = False
 
     # Build audio string from audio object
