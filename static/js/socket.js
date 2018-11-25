@@ -1,4 +1,4 @@
-var socket = io.connect('http://localhost:5000');
+var socket = io.connect(base_uri);
 socket.on('connect', function() {
     socket.emit('update', {username: '{{ username }}}'});
     speak("Connected", 'en');

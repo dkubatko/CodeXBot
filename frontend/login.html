@@ -59,6 +59,12 @@
         </div>
     </div>
 </div>
+<script>
+    var base_uri = "{{ base_uri }}";
+    var redirect_uri = "{{ redirect_uri }}";
+    console.log(base_uri);
+    console.log(redirect_uri);
+</script>
 <script src="{{ url_for('static', filename="js/speech.js")}}"></script>
 <script src="{{ url_for('static', filename="js/socket.js")}}"></script>
 <script src="{{ url_for('static', filename="js/vk_auth.js")}}"></script>

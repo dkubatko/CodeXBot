@@ -22,6 +22,12 @@ FLASK_APP_LOG_FORMAT = '%(asctime)s / %(name)s / %(levelname)s\n'\
         '| FILE: %(filename)s FUNCTION: %(funcName)s LINE: %(lineno)d |\nMESSAGE: %(message)s'
 FLASK_LOG_FILE = LOG_DIR + 'flask_app.log'
 
+VK_REDIRECT_URI_LOCAL = "http://127.0.0.1:5000/vk"
+VK_REDIRECT_URI_REMOTE = "http://192.168.1.25:5000/vk"
+
+BASE_URI_LOCAL = "http://127.0.0.1:5000"
+BASE_URI_REMOTE = "http://192.168.1.25:5000"
+
 # Get environment variables
 try:
     BOT_USERNAME = os.environ['CODEXBOT_USERNAME']

@@ -4,6 +4,7 @@ import flask.logging
 import flask_settings as settings
 import logging
 import threading
+import argparse
 from CodeXBot import TwitchBot as Bot
 from vkMusicDisplay import VKMusicDisplay
 
@@ -12,6 +13,20 @@ socketio = SocketIO(app)
 logger = logging.getLogger('flask_app')
 
 TESTING_CHANNEL = 'drazzzer'
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Launch Flask server")
+    parser.add_argument('--remote', dest='remote', default=False,
+                action='store_true', help="start remote setup")
+    return parser.parse_args()
+
+args = parse_arguments()
+if args.remote:
+    base_uri = settings.BASE_URI_REMOTE
+    vk_redirect_uri = settings.VK_REDIRECT_URI_REMOTE
+else:
+    base_uri = settings.BASE_URI_LOCAL
+    vk_redirect_uri = settings.VK_REDIRECT_URI_LOCAL
 
 # Connect to testing channel
 bot = Bot(settings.BOT_USERNAME, settings.BOT_CLIENT_ID,
@@ -79,7 +94,9 @@ def index_page():
 def login():
     username = request.form['username']
     app.logger.info("Connected user with username <{0}>".format(username))
-    return render_template('login.html', username = username)
+    print(vk_redirect_uri)
+    return render_template('login.html', username = username, 
+                base_uri = base_uri, redirect_uri = vk_redirect_uri)
 
 
 @app.route('/vk', methods=['GET'])
@@ -94,14 +111,15 @@ def vk_auth():
         socket_emit('vk_auth', {'success': True}, sid)
 
     # Initialize VKMD with code
-    vkmd = VKMusicDisplay(code)
+    vkmd = VKMusicDisplay(code, vk_redirect_uri)
     vkmd.set_socket(socket_emit, sid)
     
     # Start polling music
     socketio.start_background_task(target=vkmd.start)
 
     socket_emit('vk_auth', {'success': True}, sid)
-    return 'Thanks!'
+    
+    return render_template('vk_auth_success.html')
 
 
 @socketio.on('update')
@@ -114,4 +132,4 @@ def handle_update_socket(json):
 if (__name__ == '__main__'):
     socketio.start_background_task(target=bot.start)
     log_setup(app, logger)
-    socketio.run(app, port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)

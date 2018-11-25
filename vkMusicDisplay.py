@@ -4,15 +4,17 @@ import bot_settings as settings
 import logging
 
 class VKMusicDisplay:
-    def __init__(self, code):
+    def __init__(self, code, redirect_uri):
         # Preset
         self._log_setup()
-        self._connect(code)
+
+        self._redirect_uri = redirect_uri
+        self.connected = self._connect(code)
 
         # Initialize socketio
         self._emit = None
         self._sid = None
-        
+
         self.current = None
         #test
         self.get_audio()
@@ -40,13 +42,14 @@ class VKMusicDisplay:
         params = {
             'client_id': settings.VK_CLIENT_ID,
             'client_secret': settings.VK_CLIENT_SECRET,
-            'redirect_uri': settings.VK_REDIRECT_URI,
+            'redirect_uri': self._redirect_uri,
             'code': code
         }
         data = requests.get(settings.VK_ACCESS_TOKEN_LINK, params=params)
+
         if data.status_code != 200:
             self.logger.error("Failed to connect to VK API")
-            return
+            return False
         
         resp = data.json()
         
@@ -54,9 +57,10 @@ class VKMusicDisplay:
 
         if not token:
             self.logger.error("No access token provided")
-            return
+            return False
 
         self.token = token
+        return True
 
     # Set communication to frontend
     def set_socket(self, emit_func, sid):
@@ -65,9 +69,9 @@ class VKMusicDisplay:
         self._sid = sid
 
     def start(self):
-        while True:
+        while self.connected:
             success, audio = self.get_audio()
-            print(success, audio)
+
             if success and self.current != audio:
                 self.logger.info('Audio update to {0}'.format(audio))
                 # Set current track
@@ -81,7 +85,7 @@ class VKMusicDisplay:
                 f = open(settings.VK_MUSIC_OUT_FILE, 'w')
                 f.write(audio + ' '*settings.VK_MUSIC_SPACE_AMOUNT) # separate two scrolls
                 f.close()
-                
+
             # Wait delay
             time.sleep(settings.VK_STATUS_POLL_DELAY)
 
