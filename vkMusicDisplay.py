@@ -67,6 +67,7 @@ class VKMusicDisplay:
     def start(self):
         while True:
             success, audio = self.get_audio()
+            print(success, audio)
             if success and self.current != audio:
                 self.logger.info('Audio update to {0}'.format(audio))
                 # Set current track
@@ -78,11 +79,11 @@ class VKMusicDisplay:
                 
                 # Update file
                 f = open(settings.VK_MUSIC_OUT_FILE, 'w')
-                f.write(audio + ' '*15) # separate two scrolls
+                f.write(audio + ' '*settings.VK_MUSIC_SPACE_AMOUNT) # separate two scrolls
                 f.close()
                 
-                # Wait delay
-                time.sleep(settings.VK_STATUS_POLL_DELAY)
+            # Wait delay
+            time.sleep(settings.VK_STATUS_POLL_DELAY)
 
     # Build audio string from audio object
     def _build_audio_string(self, audio):

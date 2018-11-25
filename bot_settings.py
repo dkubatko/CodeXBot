@@ -49,6 +49,7 @@ VK_API_VERSION = '5.92'
 VK_NO_AUDIO = "No audio playing. Check status broadcasting"
 VK_LOG_FILE = LOG_DIR + "vkmd.log"
 VK_MUSIC_OUT_FILE = "now_playing.txt"
+VK_MUSIC_SPACE_AMOUNT = 15
 VK_STATUS_POLL_DELAY = 3
 try:
     VK_CLIENT_ID = os.environ['VK_CLIENT_ID']
