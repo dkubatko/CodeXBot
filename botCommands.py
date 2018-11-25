@@ -8,6 +8,14 @@ from queue import Queue
 from flask_socketio import SocketIO
 from textblob import TextBlob
 
+
+'''
+TODO: Separate Command class
+that commands must inherit
+Each has handlers for different arguments
+To string conversion i.e. !giveaway [start, close] 
+'''
+
 class Commands():
     def __init__(self, bot):
         self._log_setup()
@@ -118,6 +126,13 @@ class Commands():
             return True
         else:
             return False
+
+    # Prints all available commands
+    def command_help(self, cmd):
+        msg = settings.COMMAND_HELP_TEMPLATE.format(', '
+            .join(map(lambda x: '!' + x, settings.COMMANDS_AVAILABLE)))
+        return self.bot.Message(cmd.by, msg)
+
 
     # Echoes text back to the chat
     def command_echo(self, cmd):

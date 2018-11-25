@@ -19,17 +19,18 @@ BOT_LOG_FILE = LOG_DIR + "bot.log"
 
 # Commands setup
 COMMANDS_LOG_FILE = LOG_DIR + "commands.log"
-COMMANDS_AVAILABLE = ['echo']
-COMMANDS_DEBUG = ['ask', 'giveaway']
+COMMANDS_AVAILABLE = ['echo', 'ask', 'giveaway']
+COMMANDS_DEBUG = ['help']
 COMMANDS_DEBUG.extend(COMMANDS_AVAILABLE)
 COMMAND_PREFIX = "command_"
 
 LOG_FORMATTER = '%(asctime)s / %(name)s / %(levelname)s\n'\
         '| FILE: %(filename)s FUNCTION: %(funcName)s LINE: %(lineno)d |\nMESSAGE: %(message)s'
 
-COMMAND_FORWARD_RESPONSE_SUCCESS = "Forwarded message {0} to the socket."
+COMMAND_FORWARD_RESPONSE_SUCCESS = "Forwarded message {0} to the queue"
 COMMAND_FORWARD_RESPONSE_FAIL = "SID is not set yet. Connect to the server."
 
+COMMAND_HELP_TEMPLATE = "Available commands: {0}"
 # DB setup
 DB_CONNECTION_STRING = "mongodb+srv://{0}:{1}@codexbot-cluster-ds4ut.mongodb.net/test?retryWrites=true"
 DB_LOG_FILE = LOG_DIR + "db.log"
