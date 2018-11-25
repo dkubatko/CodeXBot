@@ -78,7 +78,9 @@ class VKMusicDisplay:
                 
                 # Update file
                 f = open(settings.VK_MUSIC_OUT_FILE, 'w')
-                f.write(audio)
+                f.write(audio + ' '*15) # separate two scrolls
+                f.close()
+                
                 # Wait delay
                 time.sleep(settings.VK_STATUS_POLL_DELAY)
 
