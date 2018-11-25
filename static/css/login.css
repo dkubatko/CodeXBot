@@ -1,8 +1,43 @@
+* { box-sizing: border-box }
+
 body {
-    background-color: #659DBD;
-    font-family: 'Black Han Sans', sans-serif;
+    background-color: #AFBFDC;
+    color: #171A1C;
     font-family: 'Poppins', sans-serif;
     text-align: center;
+}
+
+.theme-picker {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    right: 10px;
+}
+
+.theme {
+    width: 80px;
+    height: 30px;
+    border: 1px solid white;
+    margin: 3px;
+    cursor: pointer;
+    background-color: white;
+    color: white;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#dark {
+    background-image: -webkit-linear-gradient(60deg, 
+            #EE682A 50%, #060809 50%);
+}
+
+#light {
+    background-image: -webkit-linear-gradient(60deg, 
+            #F9F0AF 50%, #AFBFDC 50%);
+    color: black;
+    border: 1px solid black;
 }
 
 .wlcm {
@@ -28,13 +63,13 @@ body {
     display: flex;
     flex-direction: column;
     /* border: 1px solid black; */
-    background-color: #FBEEC1;
+    background-color: #F9F0AF;
     width: 100%;
     margin: 10px;
     align-items: center;
     height: 100%;
     flex: 1;
-    box-shadow: 5px 5px #45668e;
+    box-shadow: 5px 5px #F0A979;
 }
 
 .widget .title {
@@ -50,10 +85,23 @@ body {
     flex-direction: column;
 }
 
+button {
+    font-family: 'Righteous', cursive;
+}
+
 #vk_auth {
     background-color: #45668e;
     border: 1px solid black;
     padding: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+#test_speech {
+    background-color: #F0A979;
+    border: none;
+    padding: 10px;
+    width: 70%;
     color: white;
     cursor: pointer;
 }
@@ -82,7 +130,7 @@ body {
     -webkit-appearance: none;
     width: 100%;
     height: 10px;
-    background: #d3d3d3;
+    background: #434343;
     outline: none;
     opacity: 0.7;
     -webkit-transition: .2s;
@@ -92,16 +140,16 @@ body {
 .slider::-moz-range-thumb {
     width: 25px;
     height: 25px;
-    background: #4CAF50;
+    background: #EE682A;
     cursor: pointer;
 }
 
 .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 25px;
-    height: 25px;
-    background: #4CAF50;
+    width: 15px;
+    height: 20px;
+    background: #EE682A;
     cursor: pointer;
 }
 
