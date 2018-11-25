@@ -31,16 +31,25 @@ $(document).ready(function() {
         // only start upon voices loaded
         voiceReady = true;
         var voices = window.speechSynthesis.getVoices();
-
-        // Enable test function
-        $("#test_speech").click(function() {
-            speak("This is a test of a speech synthesis utility.");
-        });
     };
-    // Make speak visible everywhere
+
+    // Enable test function
+    $("#test_speech").click(function() {
+        speak("This is a test of a speech synthesis utility.");
+    });
+
+    var speaking = false;
+
+    function endSpeak() {
+        console.log("Ended speaking");
+        speaking = false;
+    }
+
+     // Make speak visible everywhere
     window.speak = function(message, lang) {
         var voices = window.speechSynthesis.getVoices();
-        if (voiceReady) {
+        if (voiceReady && !speaking) {
+            speaking = true;
             var utterThis = new SpeechSynthesisUtterance(message);           
             utterThis.rate = rate.value;
             utterThis.pitch = pitch.value;
@@ -57,6 +66,8 @@ $(document).ready(function() {
                     utterThis.voice = synth.getVoices()[3];
                     break;
             }
+            console.log("Start speaking");
+            utterThis.onend = endSpeak;
             synth.speak(utterThis);
         }
     }
